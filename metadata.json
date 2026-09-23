@@ -1,0 +1,8 @@
+{
+  "name": "Remix NoteCode Android",
+  "description": "A powerful, feature-rich code and text editor designed specifically for professional coding on your Android device.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
