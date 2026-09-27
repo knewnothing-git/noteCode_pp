@@ -67,6 +67,7 @@ data class EditorUiState(
     val showGoToLineDialog: Boolean = false,
     val showLineToolsDialog: Boolean = false,
     val showSupportDialog: Boolean = false,
+    val showTermuxSheet: Boolean = false,
     val infoMessage: String? = null
 )
 
@@ -973,6 +974,7 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
     fun setShowGoToLineDialog(show: Boolean) = _uiState.update { it.copy(showGoToLineDialog = show) }
     fun setShowLineToolsDialog(show: Boolean) = _uiState.update { it.copy(showLineToolsDialog = show) }
     fun setShowSupportDialog(show: Boolean) = _uiState.update { it.copy(showSupportDialog = show) }
+    fun setShowTermuxSheet(show: Boolean) = _uiState.update { it.copy(showTermuxSheet = show) }
 
     fun clearFeedback() = _uiState.update { it.copy(infoMessage = null) }
 

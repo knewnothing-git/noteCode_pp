@@ -78,6 +78,16 @@
 ### 🌐 Live HTML & Markdown Preview
 - Built-in previewer to render Markdown and live HTML/CSS output directly inside the app.
 
+### 💻 Termux Environment & NPM / PNPM Runner
+- **Built-in Termux Runner**: Execute **Node.js**, **npm**, and **pnpm** workflows directly from NoteCode++.
+- **Dual Execution Modes**:
+  - **Embedded App Console**: Run commands in the background (`pnpm install`, `npm run build`, `npm test`) with real-time stdout, stderr, and exit codes streamed directly into NoteCode++'s dark terminal console.
+  - **Interactive Termux Session**: Launch into the full Termux terminal emulator for interactive dev servers (such as `pnpm dev`, `vite`, `next dev`, or interactive CLIs) with hot-reloading and full TTY keyboard control.
+- **Smart `package.json` Detection**: Automatically inspects open `package.json` files and creates 1-tap quick buttons for all detected scripts (`dev`, `build`, `test`, `start`, `lint`).
+- **Quick Command Presets**: Instant runners for `pnpm dev`, `npm run dev`, `pnpm install`, `npm install`, `pnpm build`, `npm test`, and `node (current file)`.
+- **Custom Working Directory**: Easily set the working directory to Termux home (`~`), project folders (`~/my-app`), or external storage (`/sdcard/Download`).
+- **Integrated Setup & Diagnostics**: 4-step interactive wizard explaining how to install Termux from F-Droid, grant the `RUN_COMMAND` permission, enable `allow-external-apps = true`, and install Node.js LTS and pnpm.
+
 ### 🔒 100% Offline & Private
 - Zero telemetry, zero analytics tracking, and zero advertising SDKs.
 - Operates entirely locally on your device with no required account or subscription paywall.
@@ -153,8 +163,9 @@ cd notecode-android
 │   ├── src/main/
 │   │   ├── java/com/example/
 │   │   │   ├── data/                  # Room database, DAO, entities & repositories
+│   │   │   ├── termux/                # Termux RUN_COMMAND bridge, intent receivers & models
 │   │   │   ├── ui/
-│   │   │   │   ├── components/        # Canvas, Toolbars, Dialogs, Status & Tab Bars
+│   │   │   │   ├── components/        # Canvas, Toolbars, Termux Drawer, Dialogs & Status Bar
 │   │   │   │   ├── screen/            # Main NotepadScreen Compose view
 │   │   │   │   ├── syntax/            # Lexer & Syntax Highlighter engine
 │   │   │   │   ├── theme/             # Editor theme palettes & M3 theming
@@ -169,7 +180,38 @@ cd notecode-android
 
 ---
 
+## 💖 Support & Sponsor NoteCode++
+
+NoteCode++ is and will always remain **100% free, open-source, offline, and privacy-first** with zero ads, zero trackers, and zero paywalls. 
+
+If NoteCode++ boosts your mobile programming productivity or helps you maintain projects on Android, please consider supporting development!
+
+<p align="center">
+  <a href="https://buymeacoffee.com/devsideofmine">
+    <img src="https://img.shields.io/badge/Buy%20Me%20A%20Coffee-devsideofmine-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee" />
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://github.com/sponsors/knewnothing-git">
+    <img src="https://img.shields.io/badge/GitHub%20Sponsors-knewnothing--git-EA4AAA?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="GitHub Sponsors" />
+  </a>
+</p>
+
+### Where to Sponsor & Donate:
+| Platform | Link / Account | Description |
+| :--- | :--- | :--- |
+| ☕ **Buy Me a Coffee** | [`buymeacoffee.com/devsideofmine`](https://buymeacoffee.com/devsideofmine) | Quick 1-click tips & coffee sponsorships (@devsideofmine) |
+| 💖 **GitHub Sponsors** | [`github.com/sponsors/knewnothing-git`](https://github.com/sponsors/knewnothing-git) | Direct sponsorship on GitHub (@knewnothing-git) |
+
+<p align="center">
+  <iframe src="https://github.com/sponsors/knewnothing-git/button" title="Sponsor knewnothing-git" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
+</p>
+
+> **Note**: In the app, you can tap the **Support NoteCode++** button (golden volunteer activism icon) located in the top header right next to the new file (`+`) button to open the interactive Support & Sponsor Dialog at any time!
+
+---
+
 ## 📄 License
 
 This project is open-source under the [Apache 2.0 License](LICENSE).
 Feel free to fork, contribute, and adapt it for your own developer tool needs!
+

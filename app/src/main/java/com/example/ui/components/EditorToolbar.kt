@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.SaveAs
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material.icons.filled.WrapText
@@ -99,6 +100,7 @@ fun EditorToolbar(
     onSelectTheme: () -> Unit,
     onGoToLine: () -> Unit,
     onRename: () -> Unit,
+    onOpenTermux: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -413,6 +415,15 @@ fun EditorToolbar(
                 onClick = onPreview
             )
 
+            // Termux Environment Runner (npm / pnpm)
+            ToolbarButton(
+                icon = Icons.Default.Terminal,
+                contentDescription = "Termux Runner (npm/pnpm)",
+                testTag = "toolbar_termux",
+                tint = Color(0xFF3DDC84),
+                onClick = onOpenTermux
+            )
+
             // Stats / Info
             ToolbarButton(
                 icon = Icons.Default.Info,
@@ -429,15 +440,6 @@ fun EditorToolbar(
                 testTag = "toolbar_theme",
                 tint = theme.text.copy(alpha = 0.85f),
                 onClick = onSelectTheme
-            )
-
-            // Support NoteCode++ (Monetization Tip Jar)
-            ToolbarButton(
-                icon = Icons.Default.VolunteerActivism,
-                contentDescription = "Support NoteCode++",
-                testTag = "toolbar_support",
-                tint = Color(0xFFFFB300),
-                onClick = onShowSupport
             )
 
             // More actions (Rename file, Go to line, Support)
@@ -480,6 +482,21 @@ fun EditorToolbar(
                         onClick = {
                             showMoreMenu = false
                             onGoToLine()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Run in Termux (npm & pnpm)") },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Terminal,
+                                contentDescription = null,
+                                tint = Color(0xFF3DDC84),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        },
+                        onClick = {
+                            showMoreMenu = false
+                            onOpenTermux()
                         }
                     )
                     DropdownMenuItem(

@@ -1,5 +1,8 @@
 package com.example.ui.components
 
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,13 +19,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.OpenInBrowser
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -39,8 +47,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -369,6 +380,9 @@ fun SupportTipJarDialog(
     onTipSelected: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
@@ -380,33 +394,113 @@ fun SupportTipJarDialog(
                     painter = painterResource(id = R.drawable.notepadpp_icon_1789914595879),
                     contentDescription = "NoteCode++ Logo",
                     modifier = Modifier
-                        .size(28.dp)
-                        .clip(RoundedCornerShape(6.dp))
+                        .size(32.dp)
+                        .clip(RoundedCornerShape(8.dp))
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Support NoteCode++",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp,
-                    modifier = Modifier.weight(1f)
-                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Support NoteCode++",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp
+                    )
+                    Text(
+                        text = "Keeping Free Developer Tools Alive",
+                        fontSize = 11.sp,
+                        color = Color(0xFFFF5252),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
         },
         text = {
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
                 Text(
-                    text = "NoteCode++ honors the legacy of desktop Notepad++: 100% free, privacy-first, and zero subscription paywalls.\n\nIf NoteCode++ boosts your productivity, consider dropping a tip in the developer jar to support continuous updates, new syntax lexers, and performance upgrades!",
-                    fontSize = 13.sp,
-                    lineHeight = 18.sp,
+                    text = "NoteCode++ honors the legacy of desktop Notepad++: 100% free, open-source, privacy-first, and zero subscription paywalls.\n\nYour sponsorship directly funds development of new syntax lexers, Termux features, line operations, and Android ecosystem updates!",
+                    fontSize = 12.sp,
+                    lineHeight = 17.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
 
+                Text(
+                    text = "SUPPORT & DONATION PLATFORMS",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.5.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                val sponsorPlatforms = listOf(
+                    Triple("☕ Buy Me a Coffee", "https://buymeacoffee.com/devsideofmine", "Support via Buy Me a Coffee (@devsideofmine)"),
+                    Triple("💖 GitHub Sponsors", "https://github.com/sponsors/knewnothing-git", "Official GitHub developer sponsor (@knewnothing-git)")
+                )
+
+                sponsorPlatforms.forEach { (name, url, subtitle) ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .defaultMinSize(minHeight = 48.dp)
+                            .padding(vertical = 4.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(theme.surface)
+                            .border(1.dp, theme.bookmarkColor.copy(alpha = 0.35f), RoundedCornerShape(8.dp))
+                            .clickable {
+                                try {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                    context.startActivity(intent)
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "Could not open browser: ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            .padding(horizontal = 10.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = name,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = subtitle,
+                                fontSize = 10.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.Default.OpenInBrowser,
+                            contentDescription = "Open $name",
+                            tint = Color(0xFF3DDC84),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Text(
+                    text = "QUICK TIP JAR TIERS",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.5.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 val tipTiers = listOf(
-                    Triple("☕ Coffee Tip", "$1.99", "A warm coffee for late-night coding"),
-                    Triple("🍕 Pizza Slice", "$4.99", "Helps fuel feature development"),
-                    Triple("🚀 Patron Badge", "$9.99", "Ultimate supporter of open developer tools")
+                    Triple("☕ Coffee Tip", "$1.99", "A warm cup for late-night mobile coding"),
+                    Triple("🍕 Pizza Slice", "$4.99", "Fuels active feature & parser development"),
+                    Triple("🚀 Patron Badge", "$9.99", "Ultimate supporter of open developer software")
                 )
 
                 tipTiers.forEach { (title, amount, desc) ->
@@ -417,34 +511,34 @@ fun SupportTipJarDialog(
                             .padding(vertical = 4.dp)
                             .clip(RoundedCornerShape(8.dp))
                             .background(theme.surface)
-                            .border(1.dp, theme.bookmarkColor.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
+                            .border(1.dp, Color(0xFFFF5252).copy(alpha = 0.3f), RoundedCornerShape(8.dp))
                             .clickable { onTipSelected(amount) }
-                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                            .padding(horizontal = 10.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = title,
-                                fontSize = 13.sp,
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = desc,
-                                fontSize = 11.sp,
+                                fontSize = 10.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(4.dp))
-                                .background(theme.bookmarkColor)
+                                .background(Color(0xFFFF5252))
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                         ) {
                             Text(
                                 text = amount,
                                 color = Color.White,
-                                fontSize = 12.sp,
+                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -453,8 +547,31 @@ fun SupportTipJarDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Maybe Later")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                TextButton(
+                    onClick = {
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(
+                                Intent.EXTRA_TEXT,
+                                "Check out NoteCode++ for Android - a powerful, 100% free offline source code editor with multi-tabs and Termux npm/pnpm support!"
+                            )
+                        }
+                        context.startActivity(Intent.createChooser(shareIntent, "Share NoteCode++"))
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Share",
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Share App")
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                TextButton(onClick = onDismiss) {
+                    Text("Close")
+                }
             }
         }
     )

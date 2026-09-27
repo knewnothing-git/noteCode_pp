@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,7 +29,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,9 +40,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -93,6 +98,7 @@ import com.example.ui.components.PreviewDialog
 import com.example.ui.components.RenameDialog
 import com.example.ui.components.SupportTipJarDialog
 import com.example.ui.components.SymbolQuickBar
+import com.example.ui.components.TermuxConsoleSheet
 import com.example.ui.components.ThemeSelectorDialog
 import com.example.ui.viewmodel.EditorViewModel
 import kotlinx.coroutines.Dispatchers
@@ -396,6 +402,7 @@ fun NotepadScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets.ime.union(WindowInsets.navigationBars),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Surface(
@@ -468,6 +475,21 @@ fun NotepadScreen(
                         }
                     }
 
+                    // Support NoteCode++ Button (Moved to top header right in front of '+')
+                    IconButton(
+                        onClick = { viewModel.setShowSupportDialog(true) },
+                        modifier = Modifier
+                            .size(44.dp)
+                            .testTag("header_support_button")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.VolunteerActivism,
+                            contentDescription = "Support NoteCode++",
+                            tint = Color(0xFFFFB300),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
                     // Quick Header actions with >=44-48dp touch targets
                     IconButton(
                         onClick = { viewModel.createNewDocument() },
@@ -533,7 +555,8 @@ fun NotepadScreen(
                     onLineEndingClick = { viewModel.toggleLineEnding() },
                     onEncodingClick = { viewModel.toggleEncoding() },
                     onZoomClick = { viewModel.resetFontSize() },
-                    onReadOnlyClick = { viewModel.toggleReadOnly() }
+                    onReadOnlyClick = { viewModel.toggleReadOnly() },
+                    onTermuxClick = { viewModel.setShowTermuxSheet(true) }
                 )
             }
         }
@@ -593,7 +616,8 @@ fun NotepadScreen(
                 onShowStats = { viewModel.setShowStatsDialog(true) },
                 onSelectTheme = { viewModel.setShowThemeDialog(true) },
                 onGoToLine = { viewModel.setShowGoToLineDialog(true) },
-                onRename = { viewModel.setShowRenameDialog(true) }
+                onRename = { viewModel.setShowRenameDialog(true) },
+                onOpenTermux = { viewModel.setShowTermuxSheet(true) }
             )
 
             // 3. Quick Symbol & Snippet Accessory Bar
@@ -847,6 +871,15 @@ fun NotepadScreen(
         )
     }
 
+    if (uiState.showTermuxSheet) {
+        TermuxConsoleSheet(
+            activeDocumentTitle = activeTitle,
+            activeDocumentContent = uiState.editorValue.text,
+            theme = theme,
+            onDismiss = { viewModel.setShowTermuxSheet(false) }
+        )
+    }
+
     if (showAboutDialog) {
         AlertDialog(
             onDismissRequest = { showAboutDialog = false },
@@ -884,8 +917,28 @@ fun NotepadScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showAboutDialog = false }) {
-                    Text("Close")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(
+                        onClick = {
+                            showAboutDialog = false
+                            viewModel.setShowSupportDialog(true)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = null,
+                            tint = Color(0xFFFF5252),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Support NoteCode++", color = Color(0xFFFF5252))
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    TextButton(onClick = { showAboutDialog = false }) {
+                        Text("Close")
+                    }
                 }
             }
         )

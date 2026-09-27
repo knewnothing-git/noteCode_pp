@@ -50,6 +50,7 @@ fun EditorStatusBar(
     onEncodingClick: () -> Unit,
     onZoomClick: () -> Unit,
     onReadOnlyClick: () -> Unit,
+    onTermuxClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -140,6 +141,18 @@ fun EditorStatusBar(
                 isHighlight = isReadOnly,
                 highlightColor = if (isReadOnly) Color(0xFFFF5252) else null,
                 onClick = onReadOnlyClick
+            )
+
+            StatusDivider(theme)
+
+            // Termux Environment Runner
+            StatusItem(
+                text = ">_ Termux",
+                testTag = "status_termux",
+                theme = theme,
+                isHighlight = true,
+                highlightColor = Color(0xFF3DDC84),
+                onClick = onTermuxClick
             )
         }
     }
