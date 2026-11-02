@@ -138,8 +138,8 @@ adb install apk/notecode-plus-plus-release.apk
 ### Clone & Build
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/notecode-android.git
-cd notecode-android
+git clone https://github.com/knewnothing-git/noteCode_pp.git
+cd noteCode_pp
 
 # Build Release APK
 ./gradlew assembleRelease
@@ -150,6 +150,19 @@ cd notecode-android
 # Build Debug APK
 ./gradlew assembleDebug
 ```
+
+### Signing a Release Build
+
+Release signing keys are deliberately kept out of git. The build reads them from environment variables:
+
+```bash
+export KEYSTORE_PATH=/path/to/my-upload-key.jks
+export STORE_PASSWORD=your_store_password
+export KEY_PASSWORD=your_key_password
+./gradlew assembleRelease
+```
+
+If `KEYSTORE_PATH` is not set, the build looks for `my-upload-key.jks` in the repo root, then falls back to a `debug.keystore` in the repo root (also not committed). A fresh clone must supply one of these to produce a signed release APK.
 
 ---
 
@@ -214,4 +227,3 @@ If NoteCode++ boosts your mobile programming productivity or helps you maintain 
 
 This project is open-source under the [Apache 2.0 License](LICENSE).
 Feel free to fork, contribute, and adapt it for your own developer tool needs!
-
