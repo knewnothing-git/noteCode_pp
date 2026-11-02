@@ -151,6 +151,8 @@ cd noteCode_pp
 ./gradlew assembleDebug
 ```
 
+> **Note (macOS/Linux):** if `./gradlew` reports "Permission denied" after a fresh clone, run `chmod +x gradlew` once, or invoke it as `sh gradlew`.
+
 ### Signing a Release Build
 
 Release signing keys are deliberately kept out of git. The build reads them from environment variables:
