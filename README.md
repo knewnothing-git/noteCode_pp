@@ -164,7 +164,7 @@ export KEY_PASSWORD=your_key_password
 ./gradlew assembleRelease
 ```
 
-If `KEYSTORE_PATH` is not set, the build looks for `my-upload-key.jks` in the repo root, then falls back to a `debug.keystore` in the repo root (also not committed). A fresh clone must supply one of these to produce a signed release APK.
+If `KEYSTORE_PATH` is not set, the build looks for `my-upload-key.jks` in the repo root. Release builds fail if no upload keystore is provided (there is no fallback to `debug.keystore`).
 
 ---
 

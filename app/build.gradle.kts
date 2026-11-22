@@ -1,4 +1,5 @@
 import com.google.gms.googleservices.GoogleServicesPlugin.MissingGoogleServicesStrategy
+import java.io.File
 
 plugins {
   alias(libs.plugins.android.application)
@@ -14,7 +15,7 @@ android {
   compileSdk { version = release(36) { minorApiLevel = 1 } }
 
   defaultConfig {
-    applicationId = "com.aistudio.applet.luvtbh"
+    applicationId = "com.notecode"
     minSdk = 24
     targetSdk = 36
     versionCode = 1
@@ -27,16 +28,13 @@ android {
     create("release") {
       val keystorePath = System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks"
       val uploadKey = file(keystorePath)
-      if (uploadKey.exists()) {
+      val storePwd = System.getenv("STORE_PASSWORD")
+      val keyPwd = System.getenv("KEY_PASSWORD")
+      if (uploadKey.exists() && !storePwd.isNullOrBlank() && !keyPwd.isNullOrBlank()) {
         storeFile = uploadKey
-        storePassword = System.getenv("STORE_PASSWORD")
+        storePassword = storePwd
         keyAlias = "upload"
-        keyPassword = System.getenv("KEY_PASSWORD")
-      } else {
-        storeFile = file("${rootDir}/debug.keystore")
-        storePassword = "android"
-        keyAlias = "androiddebugkey"
-        keyPassword = "android"
+        keyPassword = keyPwd
       }
     }
     create("debugConfig") {
@@ -146,3 +144,32 @@ dependencies {
   "ksp"(libs.androidx.room.compiler)
   "ksp"(libs.moshi.kotlin.codegen)
 }
+
+val releaseKeystorePath =
+  providers.environmentVariable("KEYSTORE_PATH")
+    .orElse(rootProject.layout.projectDirectory.file("my-upload-key.jks").asFile.absolutePath)
+val releaseStorePassword = providers.environmentVariable("STORE_PASSWORD")
+val releaseKeyPassword = providers.environmentVariable("KEY_PASSWORD")
+
+tasks.matching {
+  it.name in setOf("validateSigningRelease", "packageRelease", "packageReleaseBundle", "signReleaseBundle")
+}.configureEach {
+  val keystorePathProvider = releaseKeystorePath
+  val storePwdProvider = releaseStorePassword
+  val keyPwdProvider = releaseKeyPassword
+  doFirst {
+    val keystoreFile = File(keystorePathProvider.get())
+    if (!keystoreFile.exists()) {
+      throw GradleException(
+        "Release signing failed: upload keystore not found at '${keystoreFile.absolutePath}'. " +
+          "Set KEYSTORE_PATH or place my-upload-key.jks in the repository root (debug fallback is disabled)."
+      )
+    }
+    if (storePwdProvider.orNull.isNullOrBlank() || keyPwdProvider.orNull.isNullOrBlank()) {
+      throw GradleException(
+        "Release signing failed: STORE_PASSWORD and KEY_PASSWORD environment variables must be set."
+      )
+    }
+  }
+}
+
